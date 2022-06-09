@@ -2,14 +2,12 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  Generated,
   BaseEntity,
 } from 'typeorm';
 import { instanceToPlain } from 'class-transformer';
 
 export class AppEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  @Generated('uuid')
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   toJSON() {

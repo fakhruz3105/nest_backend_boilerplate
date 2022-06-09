@@ -12,7 +12,7 @@ export class AuthService {
   @Inject(CACHE_MANAGER)
   private cacheManager: Cache;
 
-  constructor(private jwtService: JwtService) {}
+  constructor(private readonly jwtService: JwtService) {}
 
   async validateUser(email: string, password: string): Promise<any> {
     return await User.verifyUser(email, password);

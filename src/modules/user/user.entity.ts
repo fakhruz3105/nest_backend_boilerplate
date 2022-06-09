@@ -27,9 +27,6 @@ export class User extends AppEntity {
   })
   role: UserRole;
 
-  @Column({ type: 'boolean', default: false })
-  public isDeleted: boolean;
-
   toJSON() {
     return instanceToPlain(this);
   }

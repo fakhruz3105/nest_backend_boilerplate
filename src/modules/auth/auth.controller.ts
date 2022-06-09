@@ -1,15 +1,6 @@
 import { Public } from '@/decorator/public.decorator';
-import { Roles } from '@/decorator/roles.decorator';
-import {
-  Controller,
-  Request,
-  Post,
-  UseGuards,
-  Get,
-  Body,
-  Res,
-} from '@nestjs/common';
-import { User as UserEntity, UserRole } from '../user/user.entity';
+import { Controller, Post, UseGuards, Res, Body } from '@nestjs/common';
+import { User as UserEntity } from '../user/user.entity';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
 import { Response } from 'express';
@@ -43,11 +34,5 @@ export class AuthController {
   ) {
     await this.authService.logout(user.id);
     response.clearCookie(JWT_TOKEN);
-  }
-
-  @Roles(UserRole.SUPER_ADMIN)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return;
   }
 }

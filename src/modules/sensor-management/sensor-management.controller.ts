@@ -1,7 +1,18 @@
 import { JwtAuthGuard } from '@/guards/jwt/jwt-auth.guard';
-import { Controller, Delete, Get, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
+import { NewSensorTypeDTO } from './dto/new-sensor-type.dto';
+import { NewSensorDTO } from './dto/new-sensor.dto';
+import { UpdateSensorTypeDTO } from './dto/update-sensor-type.dto';
+import { UpdateSensorDTO } from './dto/update-sensor.dto';
 import { SensorManagementService } from './sensor-management.service';
-import { Sensor } from './sensor.entity';
 
 @UseGuards(JwtAuthGuard)
 @Controller('sensor-management')
@@ -10,18 +21,45 @@ export class SensorManagementController {
     private readonly sensorManagementService: SensorManagementService,
   ) {}
 
-  @Get('/all')
-  async getListOfSensors() {}
+  @Get('sensor/all')
+  async listOfSensors() {
+    return await this.sensorManagementService.listOfSensors();
+  }
 
-  @Get(':id')
-  async getSensorDetails() {}
+  @Get('type/all')
+  async typeOfSensors() {
+    return await this.sensorManagementService.listOfSensorTypes();
+  }
 
-  @Post()
-  async registerNewSensor() {}
+  @Get('sensor/:id')
+  async sensorDetails(@Param('id') id: string) {
+    return await this.sensorManagementService.sensorDetails(id);
+  }
 
-  @Put()
-  async updateSensor() {}
+  @Get('type/:id')
+  async sensorTypeDetails(@Param('id') id: string) {
+    return await this.sensorManagementService.sensorTypeDetails(id);
+  }
 
-  @Delete()
-  async removeSensor() {}
+  @Post('sensor')
+  async registerNewSensor(@Body() newSensor: NewSensorDTO) {
+    return await this.sensorManagementService.registerNewSensor(newSensor);
+  }
+
+  @Put('sensor')
+  async updateSensor(@Body() sensor: UpdateSensorDTO) {
+    return await this.sensorManagementService.updateSensor(sensor);
+  }
+
+  @Post('type')
+  async newSensorType(@Body() newSensorType: NewSensorTypeDTO) {
+    return await this.sensorManagementService.newSensorType(newSensorType);
+  }
+
+  @Put('type')
+  async updateSensorType(@Body() updateSensorType: UpdateSensorTypeDTO) {
+    return await this.sensorManagementService.updateSensorType(
+      updateSensorType,
+    );
+  }
 }

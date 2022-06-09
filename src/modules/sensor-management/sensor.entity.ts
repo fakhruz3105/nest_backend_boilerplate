@@ -1,18 +1,19 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { AppEntity } from '@/common/model/app.entity';
 import { SensorData } from '../sensor-data/sensor-data.entity';
+import { SensorType } from './sensor-type.entity';
 
 @Entity()
 export class Sensor extends AppEntity {
-  @Column({ type: 'varchar', length: 120 })
-  public category: string;
-
-  @Column('simple-array')
-  public dataCollected: string[];
+  @Column({ type: 'json' })
+  public location: { latitude: number; longitude: number };
 
   @Column({ type: 'boolean', default: true })
   public condition: boolean;
 
-  @OneToMany(() => SensorData, (sensorData) => sensorData.sensorId)
+  @ManyToOne(() => SensorType, (sensorType) => sensorType.sensorList)
+  public sensorType: SensorType;
+
+  @OneToMany(() => SensorData, (sensorData) => sensorData.sensor)
   public dataList: SensorData[];
 }

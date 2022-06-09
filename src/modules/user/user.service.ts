@@ -1,10 +1,25 @@
-import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { CreateUserDTO } from './user.dto';
+import { DateTime } from '@/common/helper/DateTime';
+import {
+  BadRequestException,
+  Injectable,
+  OnApplicationBootstrap,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { CreateUserDTO } from './dto/create-user.dto';
+import { UpdateUserDTO } from './dto/update-user.dto';
 import { User, UserRole } from './user.entity';
 
 @Injectable()
 export class UserService implements OnApplicationBootstrap {
   async getUser(id: string): Promise<User> {
+    return await User.findOneBy({ id });
+  }
+
+  async getAllUsers() {
+    return (await User.find()).map((user) => user.toJSON());
+  }
+
+  async getUserDetails(id: string) {
     return await User.findOneBy({ id });
   }
 
@@ -14,7 +29,39 @@ export class UserService implements OnApplicationBootstrap {
     user.name = body.name;
     user.email = body.email;
     user.password = body.password;
+
     return await user.save();
+  }
+
+  async updateUser(
+    requestingUser: User,
+    updateDetails: UpdateUserDTO,
+  ): Promise<User> {
+    if (
+      requestingUser.role !== UserRole.SUPER_ADMIN &&
+      requestingUser.id !== updateDetails.id
+    ) {
+      throw new UnauthorizedException();
+    }
+
+    const { name, email, password } = updateDetails;
+
+    const userToBeUpdated = await User.findOneBy({ id: updateDetails.id });
+
+    if (name) userToBeUpdated.name = name;
+    if (email) userToBeUpdated.email = email;
+    if (password) userToBeUpdated.name = password;
+
+    return await userToBeUpdated.save();
+  }
+
+  async deleteUser(requestingUser: User, userId: string): Promise<User> {
+    if (requestingUser.id === userId) {
+      throw new BadRequestException('Unable to delete self');
+    }
+
+    const user = await User.findOneBy({ id: userId });
+    return await user.remove();
   }
 
   async onApplicationBootstrap() {

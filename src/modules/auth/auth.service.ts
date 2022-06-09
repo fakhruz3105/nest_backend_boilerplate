@@ -1,4 +1,10 @@
-import { CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  CACHE_MANAGER,
+  Inject,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDTO } from './dto/login.dto';
 import { Cache } from 'cache-manager';
@@ -20,6 +26,8 @@ export class AuthService {
 
   async login(login: LoginDTO) {
     const user = await this.validateUser(login.email, login.password);
+
+    if (!user) throw new BadRequestException('Invalid email or password');
 
     const sessionId = uuidv4();
     const token = this.jwtService.sign({ user: user.toJSON(), sessionId });

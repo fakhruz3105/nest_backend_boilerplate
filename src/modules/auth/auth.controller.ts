@@ -1,5 +1,5 @@
 import { Public } from '@/decorator/public.decorator';
-import { Controller, Post, UseGuards, Res, Body } from '@nestjs/common';
+import { Controller, Post, UseGuards, Res, Body, Get } from '@nestjs/common';
 import { User as UserEntity } from '../user/user.entity';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
@@ -12,6 +12,11 @@ import { User } from '@/decorator/user.decorator';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Get('user-details')
+  async userDetails(@User() user: UserEntity) {
+    return user;
+  }
 
   @Public()
   @Post('login')

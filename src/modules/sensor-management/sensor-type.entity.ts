@@ -3,6 +3,15 @@ import { AppEntity } from '@/common/model/app.entity';
 import { Sensor } from './sensor.entity';
 import { SensorData } from '../sensor-data/sensor-data.entity';
 
+export class ColumnNumericTransformer {
+  to(data: number): number {
+    return data;
+  }
+  from(data: string): number {
+    return parseFloat(data);
+  }
+}
+
 @Entity()
 export class SensorType extends AppEntity {
   @Column({ type: 'varchar', length: 255, unique: true })
@@ -11,7 +20,11 @@ export class SensorType extends AppEntity {
   @Column('simple-array')
   public dataCollected: string[];
 
-  @Column({ type: 'decimal', nullable: true })
+  @Column({
+    type: 'decimal',
+    nullable: true,
+    transformer: new ColumnNumericTransformer(),
+  })
   public price?: number;
 
   @OneToMany(() => Sensor, (sensor) => sensor.id)

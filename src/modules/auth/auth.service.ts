@@ -1,26 +1,16 @@
-import {
-  BadRequestException,
-  CACHE_MANAGER,
-  Inject,
-  Injectable,
-  Logger,
-} from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDTO } from './dto/login.dto';
-import { Cache } from 'cache-manager';
-import { v4 as uuidv4 } from 'uuid';
 import { User } from '../user/user.entity';
+import { AuthSession } from './auth-session.entity';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  @Inject(CACHE_MANAGER)
-  private cacheManager: Cache;
-
   constructor(private readonly jwtService: JwtService) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
+  async validateUser(email: string, password: string): Promise<User> {
     return await User.verifyUser(email, password);
   }
 
@@ -29,15 +19,20 @@ export class AuthService {
 
     if (!user) throw new BadRequestException('Invalid email or password');
 
-    const sessionId = uuidv4();
-    const token = this.jwtService.sign({ user: user.toJSON(), sessionId });
+    const session = new AuthSession();
+    session.userId = user.id;
 
-    this.cacheManager.set(user.id, sessionId, { ttl: 0 });
+    await session.save();
+
+    const token = this.jwtService.sign({
+      user: user.toJSON(),
+      sessionId: session.id,
+    });
 
     return { user: user.toJSON(), token };
   }
 
   async logout(userId: string) {
-    await this.cacheManager.del(userId);
+    await AuthSession.delete({ userId });
   }
 }

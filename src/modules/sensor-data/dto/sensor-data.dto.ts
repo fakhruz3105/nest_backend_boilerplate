@@ -1,7 +1,7 @@
-import { IsString, IsBoolean, IsOptional, IsNumber } from 'class-validator';
+import { IsBoolean, IsOptional, IsNumber, IsUUID } from 'class-validator';
 
 export class SensorDataDTO {
-  @IsString()
+  @IsUUID()
   sensorId: string;
 
   @IsBoolean()

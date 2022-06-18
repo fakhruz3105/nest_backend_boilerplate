@@ -1,3 +1,4 @@
+import { Public } from '@/decorator/public.decorator';
 import { Roles } from '@/decorator/roles.decorator';
 import { User } from '@/decorator/user.decorator';
 import {
@@ -8,9 +9,12 @@ import {
   Param,
   Post,
   Put,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
+import { VerifyUserDTO } from './dto/verify-user.dto';
 import { User as UserEntity, UserRole } from './user.entity';
 import { UserService } from './user.service';
 
@@ -45,5 +49,11 @@ export class UserController {
   @Delete(':id')
   async delete(@User() user: UserEntity, @Param('id') id: string) {
     return await this.userService.deleteUser(user, id);
+  }
+
+  @Public()
+  @Post('verification')
+  async userVerification(@Body() verifyUser: VerifyUserDTO) {
+    await this.userService.userVerification(verifyUser.id, verifyUser.password);
   }
 }

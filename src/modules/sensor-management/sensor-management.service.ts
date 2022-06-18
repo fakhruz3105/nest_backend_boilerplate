@@ -9,7 +9,8 @@ import { UpdateSensorTypeDTO } from './dto/update-sensor-type.dto';
 @Injectable()
 export class SensorManagementService {
   async listOfSensors() {
-    return (await Sensor.find()).map((sensor) => sensor.toJSON());
+    const all = await Sensor.find({ loadRelationIds: true });
+    return all.map((sensor) => sensor.toJSON());
   }
 
   async listOfSensorTypes() {
@@ -35,13 +36,19 @@ export class SensorManagementService {
   }
 
   async registerNewSensor(newSensor: NewSensorDTO) {
-    return await Sensor.create({
-      location: {
-        latitude: newSensor.latitude,
-        longitude: newSensor.longitude,
-      },
-      sensorType: { id: newSensor.sensorTypeId },
+    const sensorType = await SensorType.findOneBy({
+      id: newSensor.sensorTypeId,
     });
+
+    const sensor = new Sensor();
+    sensor.sensorType = sensorType;
+    sensor.location = {
+      latitude: newSensor.latitude,
+      longitude: newSensor.longitude,
+    };
+
+    await sensor.save();
+    return sensor.toJSON();
   }
 
   async updateSensor(updateSensor: UpdateSensorDTO) {
@@ -53,15 +60,19 @@ export class SensorManagementService {
     if (typeof latitude === 'number') location.latitude = latitude;
     if (typeof longitude === 'number') location.longitude = longitude;
 
-    return await sensor.save();
+    return (await sensor.save()).toJSON();
   }
 
   async newSensorType(newSensorType: NewSensorTypeDTO) {
-    return await SensorType.create({
-      name: newSensorType.name,
-      dataCollected: newSensorType.dataCollected,
-      price: newSensorType.price,
-    });
+    const newType = new SensorType();
+
+    newType.name = newSensorType.name;
+    newType.dataCollected = newSensorType.dataCollected;
+    newType.price = newSensorType.price;
+
+    await newType.save();
+
+    return newType.toJSON();
   }
 
   async updateSensorType(updateSensorType: UpdateSensorTypeDTO) {
@@ -73,6 +84,7 @@ export class SensorManagementService {
     if (dataCollected) sensorType.dataCollected = dataCollected;
     if (typeof price === 'number') sensorType.price = price;
 
-    return await sensorType.save();
+    await sensorType.save();
+    return sensorType.toJSON();
   }
 }

@@ -1,10 +1,10 @@
-import { IsLatitude, IsLongitude, IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class NewSensorDTO {
-  @IsLatitude()
+  @IsNumber()
   public latitude: number;
 
-  @IsLongitude()
+  @IsNumber()
   public longitude: number;
 
   @IsString()

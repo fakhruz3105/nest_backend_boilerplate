@@ -1,14 +1,8 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { UserRole } from '../user.entity';
 
 export class UpdateUserDTO {
   @IsUUID()
-  @IsNotEmpty()
   id: string;
 
   @IsOptional()
@@ -16,10 +10,10 @@ export class UpdateUserDTO {
   name?: string;
 
   @IsOptional()
-  @IsEmail()
-  email?: string;
-
-  @IsOptional()
   @IsString()
   password?: string;
+
+  @IsOptional()
+  @IsNumber()
+  role?: UserRole;
 }

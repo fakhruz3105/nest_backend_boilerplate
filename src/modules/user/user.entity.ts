@@ -1,8 +1,10 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, OneToMany } from 'typeorm';
 import bcrypt from 'bcrypt';
 import { instanceToPlain, Exclude } from 'class-transformer';
 import { AppEntity } from 'src/common/model/app.entity';
 import { BadRequestException } from '@nestjs/common';
+import { Sensor } from '../sensor-management/sensor.entity';
+import { PumpSchedule } from '../pump-schedule/pump-schedule.entity';
 
 export enum UserRole {
   SUPER_ADMIN,
@@ -30,6 +32,12 @@ export class User extends AppEntity {
     default: UserRole.ADMIN,
   })
   role: UserRole;
+
+  @OneToMany(() => Sensor, (sensor) => sensor.id)
+  public sensorList: Sensor[];
+
+  @OneToMany(() => PumpSchedule, (schedule) => schedule.id)
+  public scheduleList: PumpSchedule[];
 
   toJSON() {
     return instanceToPlain(this);

@@ -1,3 +1,4 @@
+import { User } from '@/decorator/user.decorator';
 import { JwtAuthGuard } from '@/guards/jwt/jwt-auth.guard';
 import {
   Body,
@@ -9,6 +10,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { User as UserEntity } from '../user/user.entity';
 import { NewPumpScheduleDTO } from './dto/new-pump-schedule.dto';
 import { UpdatePumpScheduleDTO } from './dto/update-pump-schedule.dto';
 import { PumpScheduleService } from './pump-schedule.service';
@@ -34,8 +36,11 @@ export class PumpScheduleController {
   }
 
   @Post()
-  async newSchedule(@Body() schedule: NewPumpScheduleDTO) {
-    return await this.pumpScheduleService.newSchedule(schedule);
+  async newSchedule(
+    @User() user: UserEntity,
+    @Body() schedule: NewPumpScheduleDTO,
+  ) {
+    return await this.pumpScheduleService.newSchedule(user, schedule);
   }
 
   @Put()

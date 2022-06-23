@@ -8,6 +8,7 @@ import { DateTime } from '@/common/helper/DateTime';
 import { Config } from '@/common/model/config.entity';
 import { GET, POST } from '@/common/helper/APICaller';
 import { ConfigService } from '@nestjs/config';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class PumpScheduleService implements OnApplicationBootstrap {
@@ -145,12 +146,13 @@ export class PumpScheduleService implements OnApplicationBootstrap {
   }
 
   async listSchedule() {
-    const list = await PumpSchedule.find();
+    const list = await PumpSchedule.find({ loadRelationIds: true });
     return list.map((e) => e.toJSON());
   }
 
-  async newSchedule(schedule: NewPumpScheduleDTO) {
+  async newSchedule(user: User, schedule: NewPumpScheduleDTO) {
     const newSchedule = new PumpSchedule();
+    newSchedule.setter = user;
     newSchedule.time = schedule.time;
     newSchedule.repeatDaily = schedule.repeatDaily;
     await newSchedule.save();

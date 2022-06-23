@@ -1,3 +1,4 @@
+import { User } from '@/decorator/user.decorator';
 import { JwtAuthGuard } from '@/guards/jwt/jwt-auth.guard';
 import {
   Body,
@@ -8,6 +9,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { User as UserEntity } from '../user/user.entity';
 import { NewSensorTypeDTO } from './dto/new-sensor-type.dto';
 import { NewSensorDTO } from './dto/new-sensor.dto';
 import { UpdateSensorTypeDTO } from './dto/update-sensor-type.dto';
@@ -42,8 +44,14 @@ export class SensorManagementController {
   }
 
   @Post('sensor')
-  async registerNewSensor(@Body() newSensor: NewSensorDTO) {
-    return await this.sensorManagementService.registerNewSensor(newSensor);
+  async registerNewSensor(
+    @User() user: UserEntity,
+    @Body() newSensor: NewSensorDTO,
+  ) {
+    return await this.sensorManagementService.registerNewSensor(
+      user,
+      newSensor,
+    );
   }
 
   @Put('sensor')

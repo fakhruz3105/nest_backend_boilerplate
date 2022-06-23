@@ -26,6 +26,10 @@ export class UserService implements OnApplicationBootstrap {
     return (await User.find()).map((user) => user.toJSON());
   }
 
+  async getAllUsersSimple() {
+    return (await User.find()).map(({ id, name }) => ({ id, name }));
+  }
+
   async getUserDetails(id: string) {
     return await User.findOneBy({ id });
   }

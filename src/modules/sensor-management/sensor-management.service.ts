@@ -5,6 +5,7 @@ import { UpdateSensorDTO } from './dto/update-sensor.dto';
 import { Sensor } from './sensor.entity';
 import { SensorType } from './sensor-type.entity';
 import { UpdateSensorTypeDTO } from './dto/update-sensor-type.dto';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class SensorManagementService {
@@ -35,12 +36,13 @@ export class SensorManagementService {
     return sensorType.toJSON();
   }
 
-  async registerNewSensor(newSensor: NewSensorDTO) {
+  async registerNewSensor(user: User, newSensor: NewSensorDTO) {
     const sensorType = await SensorType.findOneBy({
       id: newSensor.sensorTypeId,
     });
 
     const sensor = new Sensor();
+    sensor.installer = user;
     sensor.sensorType = sensorType;
     sensor.location = {
       latitude: newSensor.latitude,

@@ -142,7 +142,13 @@ export class SensorDataService {
       .map((_, i) => {
         const dayFrom = from.clone().add(i, 'week');
         const dayTo = dayFrom.clone().add(1, 'week');
-        categories.push(`Week ${i}`);
+
+        if (i === 0) {
+          categories.push(`Current Week`);
+        } else {
+          categories.push(`Last ${i} Week`);
+        }
+
         return data.filter(
           (e) => e.timestamp >= dayFrom.time && e.timestamp < dayTo.time,
         );

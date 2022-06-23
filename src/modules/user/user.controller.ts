@@ -11,7 +11,6 @@ import {
   Put,
   Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDTO } from './dto/update-user.dto';
 import { VerifyUserDTO } from './dto/verify-user.dto';
@@ -22,7 +21,12 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Roles(UserRole.SUPER_ADMIN)
+  @Get('all/simple')
+  async allUsersSimple() {
+    return await this.userService.getAllUsersSimple();
+  }
+
+  @Roles(UserRole.SUPER_ADMIN) // Endpoint guard
   @Get('all')
   async allUsers() {
     return await this.userService.getAllUsers();

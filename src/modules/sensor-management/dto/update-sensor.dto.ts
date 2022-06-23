@@ -1,14 +1,18 @@
-import { IsNumber, IsOptional, IsUUID } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsUUID } from 'class-validator';
 
 export class UpdateSensorDTO {
   @IsUUID()
   public id: string;
 
   @IsOptional()
-  @IsNumber()
-  public latitude: number;
+  @IsBoolean()
+  public condition?: boolean;
 
   @IsOptional()
   @IsNumber()
-  public longitude: number;
+  public latitude?: number;
+
+  @IsOptional()
+  @IsNumber()
+  public longitude?: number;
 }

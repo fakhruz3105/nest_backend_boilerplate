@@ -57,10 +57,11 @@ export class SensorManagementService {
     const sensor = await Sensor.findOneBy({ id: updateSensor.id });
     const location = sensor.location;
 
-    const { latitude, longitude } = updateSensor;
+    const { latitude, longitude, condition } = updateSensor;
 
     if (typeof latitude === 'number') location.latitude = latitude;
     if (typeof longitude === 'number') location.longitude = longitude;
+    if (typeof condition === 'boolean') sensor.condition = condition;
 
     return (await sensor.save()).toJSON();
   }
